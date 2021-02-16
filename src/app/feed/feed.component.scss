@@ -1,0 +1,39 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: inherit;
+}
+
+.scroll-area-wrapper {
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding-top: 2rem;
+}
+
+.story {
+    margin: 8px 0;
+}
+
+.details {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+
+    span {
+        margin-right: 8px;
+    }
+}
+
+.load-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    margin-bottom: 3.5rem;
+}
+
+.arrow-upward {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.5rem;
+}

@@ -1,0 +1,48 @@
+<app-toolbar (changeType)="onChangeType($event)"></app-toolbar>
+
+<!-- Container to keep everything on the middle of the screen -->
+<div class="scroll-area-wrapper" #scrollElement>
+    <div class="centered-container">
+        <!-- Section Label -->
+        <div class="mat-h1">{{(feedService.type$ | async) | headerTitle}}</div>
+        <mat-divider></mat-divider>
+
+        <!-- Stories List -->
+        <ng-container *ngFor="let item of feedService.stories$ | async; trackBy: idTracker">
+            <div class="story">
+                <!-- Title -->
+                <div>
+                    <a class="mat-h3" [routerLink]="[item.id]">
+                        {{item.title}}
+                    </a>
+                </div>
+                <!-- Domain -->
+                <div *ngIf="item.url">
+                    <a class="mat-body-strong" [href]="item.url" target="_blank" rel="noopener noreferrer">
+                        {{item.url | domain}}
+                    </a>
+                </div>
+                <!-- Details -->
+                <div class="details">
+                    <span>{{item.score}} points</span>
+                    <span>{{item.descendants}} comments</span>
+                    <span>By <a class="mat-body-strong">{{item.by}}</a></span>
+                    <span>From {{item.time | postFrom}}</span>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+        </ng-container>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="load-more">
+        <button mat-stroked-button color="primary" class="mat-h3" (click)="appendMoreStories()">
+            Keep loading more!
+        </button>
+    </div>
+</div>
+
+<!-- Scroll button -->
+<button mat-mini-fab class="arrow-upward" aria-label="scroll up to the top" (click)="scrollToTop()">
+    <mat-icon>arrow_upward</mat-icon>
+</button>

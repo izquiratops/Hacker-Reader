@@ -1,0 +1,58 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+/* Typography */
+// Inter
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+$custom-typography: mat-typography-config(
+  $font-family: 'Inter, Roboto, monospace',
+);
+
+@include mat-base-typography($custom-typography);
+
+/* Palettes */
+// Light Palette
+$light-primary: mat-palette($mat-deep-orange, A200);
+$light-accent: mat-palette($mat-deep-orange, 600);
+
+$light-theme: mat-light-theme((
+  color: (
+    primary: $light-primary,
+    accent: $light-accent
+  )
+));
+
+// Dark Palette.
+$dark-primary: mat-palette($mat-indigo, A200);
+$dark-accent: mat-palette($mat-indigo, 600);
+
+$dark-theme: mat-dark-theme((
+  color: (
+    primary: $dark-primary,
+    accent: $dark-accent,
+  ),
+));
+
+// Default Palette (Light)
+@include angular-material-theme($light-theme);
+
+/* Themes */
+// Light Theme
+.light-theme {
+  background-color: #fbe9e7;
+  color: black;
+
+  a { color: black; }
+  .mat-tree { background: transparent; }
+}
+
+// Dark Theme
+.dark-theme {
+  @include angular-material-color($dark-theme);
+  background-color: #121C2B;
+  color: white;
+
+  a { color: white; }
+  .mat-tree { background: transparent; }
+}
