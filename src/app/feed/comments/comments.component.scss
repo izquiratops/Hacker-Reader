@@ -1,0 +1,17 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    scroll-behavior: smooth;
+}
+
+.mat-progress-bar { position: sticky; top: 0 }
+
+.comment-wrapper {
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    margin: 0.6rem;
+    padding: 0 12px;
+    border-left: 3px solid black;
+}

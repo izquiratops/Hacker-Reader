@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
+import { MaterialModule } from './material.module';
 
 import { AppComponent } from './app.component';
+
 import { HNService } from './_shared/services/hn.service';
-import { ThemeService } from './_shared/services/theme.service';
+import { SharedService } from './_shared/services/shared.service';
 
 import { environment } from 'src/environments/environment';
-import { MaterialModule } from './material.module';
+import { CustomReuseStrategy } from './routing';
 
 const routes: Routes = [
   {
@@ -26,13 +28,14 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    MaterialModule,
     RouterModule.forRoot(routes),
-    AngularFireModule.initializeApp(environment.firebase),
-    MaterialModule
+    AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [
+    { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
     HNService,
-    ThemeService
+    SharedService
   ],
   bootstrap: [
     AppComponent

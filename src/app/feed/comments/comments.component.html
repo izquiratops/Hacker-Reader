@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+    <button mat-icon-button [routerLink]="['../']">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-progress-bar color="primary" [mode]="waitingRequest$ | async"></mat-progress-bar>
+
+<div class="centered-container">
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+        <!-- This is the tree node template for leaf nodes -->
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding
+            [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
+            <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}">
+                <div class="details">
+                    <span>By <a class="mat-body-strong">{{node.by}}</a></span>
+                    <span>From {{node.time | postFrom}}</span>
+                </div>
+                <div class="postBody" [innerHTML]="node.text"></div>
+            </div>
+        </mat-tree-node>
+
+        <!-- This is the tree node template for expandable nodes -->
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding
+            [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
+            <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}" matTreeNodeToggle>
+                <div class="details">
+                    <span>By <a class="mat-body-strong">{{node.by}}</a></span>
+                    <span>From {{node.time | postFrom}}</span>
+                    <span [hidden]="treeControl.isExpanded(node)">
+                        {{node.kids.length | replies}}
+                    </span>
+                </div>
+                <div [innerHTML]="node.text"></div>
+            </div>
+        </mat-tree-node>
+    </mat-tree>
+</div>

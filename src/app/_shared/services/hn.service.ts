@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
 import { AngularFireDatabase } from "@angular/fire/database";
-import { ProgressBarMode } from "@angular/material/progress-bar";
 
-import { from, of, Observable, BehaviorSubject, EMPTY } from "rxjs";
-import { filter, map, concatMap, mergeMap, reduce, expand, pluck, first, tap, finalize } from "rxjs/operators";
+import { from, of, Observable, EMPTY } from "rxjs";
+import { filter, map, concatMap, mergeMap, reduce, expand, pluck, first, tap } from "rxjs/operators";
 
-import { FeedType, LoadState } from "../enums";
+import { FeedType } from "../enums";
 import { Item, ItemType } from "../interfaces";
 
 /**
@@ -18,17 +17,12 @@ import { Item, ItemType } from "../interfaces";
 export class HNService {
 
     private readonly DEBUG = false;
-    waitingRequest$: BehaviorSubject<ProgressBarMode>;
 
     constructor(
         private db: AngularFireDatabase
-    ) {
-        this.waitingRequest$ = new BehaviorSubject<ProgressBarMode>(LoadState.IDLE);
-    }
+    ) { }
 
     getItemsContent(indices$: number[], offset: number): Observable<Item[]> {
-        this.waitingRequest$.next(LoadState.WAITING);
-
         return of(indices$).pipe(
             map((array: number[]) => array.slice(offset, offset + 30)),
             concatMap((array: number[]) => array),
@@ -36,7 +30,6 @@ export class HNService {
             reduce((arr: Item[], content: Item) => {
                 return arr.push(content) && arr;
             }, []),
-            finalize(() => this.waitingRequest$.next(LoadState.IDLE))
         );
     }
 
@@ -68,20 +61,17 @@ export class HNService {
     }
 
     getStoryComments(id: number) {
-        console.time('Getting comments')
         return from(this.getItem(id)).pipe(
             concatMap((story: Item) => story.kids),
             mergeMap((id: number) => this.getRecursiveReplies(id)),
             reduce((arr: Item[], content: Item) => {
                 return arr.push(content) && arr;
             }, []),
-            tap(item => this.DEBUG && console.timeEnd('Getting comments'))
         )
     }
 
     /**
      * Method for getting any Item from database.
-     * Stories, Comments, Shows, Jobs etc are extended interfaces from Item.
      * 
      * db.object could return null, to avoid linting warnings add "strictNullChecks"
      * on the tsconfig file.
@@ -93,8 +83,7 @@ export class HNService {
             .valueChanges()
             .pipe(
                 first(),
-                // Filter every removed item.
-                filter((item: Item) => !item.deleted),
+                filter((item: Item) => (item !== null) && !item.deleted),
                 map((item: Item) => {
                     // No kids -> Empty list
                     !("kids" in item) && ((item as Item).kids = []);

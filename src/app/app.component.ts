@@ -1,22 +1,38 @@
 import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
-import { ThemeService } from './_shared/services/theme.service';
+import { SharedService } from './_shared/services/shared.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    "(window:resize)": "onWindowResize($event)"
+  }
 })
 export class AppComponent {
 
-  // Class property to switch between Light or Dark themes.
   @HostBinding('class') componentCssClass: string;
 
   constructor(
-    private themeService: ThemeService
+    public shared: SharedService
   ) {
-    this.themeService.currentValue$.subscribe(
+    this.shared.currentTheme$.subscribe(
       (theme: string) => this.componentCssClass = theme
     );
   }
+
+  /**
+   * Checks if should be displayed the desktop or mobile layout.
+   * 
+   * @param event Values from the new state of the window
+   */
+  onWindowResize(event: any): void {
+    this.shared.isMobile$.next(event.target.innerWidth < this.shared.mobileThreshold);
+  }
+
+  scrollToTop() {
+    this.shared.scrollUp$.next();
+  }
+
 }

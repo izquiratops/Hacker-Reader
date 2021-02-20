@@ -3,35 +3,40 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { MaterialModule } from '../material.module';
 
-import { ToolbarComponent } from './toolbar/toolbar.component';
 import { FeedComponent } from './feed.component';
-import { FeedService } from './feed.service';
-import { HeaderPipe } from '../_shared/pipes/headerTitle.pipe';
-import { PostFromPipe } from '../_shared/pipes/postFrom.pipe';
-import { DomainPipe } from '../_shared/pipes/domain.pipe';
+import { CommentsComponent } from './comments/comments.component';
+import { PaddingPipe, RepliesPipe } from '../_shared/pipes';
+import { PostFromPipe } from '../_shared/pipes';
+import { HeaderPipe } from '../_shared/pipes';
+import { DomainPipe } from '../_shared/pipes';
+import { IconThemePipe } from '../_shared/pipes';
 
 const routes: Routes = [
   {
     path: '',
     component: FeedComponent
+  },
+  {
+    path: ':id',
+    component: CommentsComponent
   }
 ]
 
 @NgModule({
   declarations: [
-    ToolbarComponent,
     FeedComponent,
+    CommentsComponent,
+    DomainPipe,
     HeaderPipe,
     PostFromPipe,
-    DomainPipe,
+    RepliesPipe,
+    IconThemePipe,
+    PaddingPipe
   ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
     MaterialModule
-  ],
-  providers: [
-    FeedService
   ]
 })
 export class FeedModule { }

@@ -24,3 +24,9 @@ export interface Item {
     descendants: number // In the case of stories or polls, the total comment count.
     replies: Item[];    // The objects of the item's comments, this contains all the data to bind into the tree.
 }
+
+export interface ItemFlatNode extends Item {
+    level: number;
+    color: string;
+    expandable: boolean;
+}

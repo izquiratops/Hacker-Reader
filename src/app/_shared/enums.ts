@@ -27,3 +27,8 @@ export enum Theme {
     LIGHT = 'light-theme',
     DARK = 'dark-theme'
 }
+
+export enum ThemeIcon {
+    LIGHT = 'light_mode',
+    DARK = 'nights_stay'
+}

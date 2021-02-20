@@ -1,48 +1,104 @@
-<app-toolbar (changeType)="onChangeType($event)"></app-toolbar>
+<mat-toolbar color="primary">
+    <!-- If route is '/' then show Feed buttons, else Comments buttons -->
+    <ng-container *ngIf="(shared.isMobile$ | async); then mobileContent else desktopContent"></ng-container>
+    <!-- Buttons at the end -->
+    <span class="spacer"></span>
+    <button mat-icon-button aria-label="Switch between Light/Dark theme" (click)="shared.switchTheme()">
+        <mat-icon>{{(shared.currentTheme$ | async) | iconTheme}}</mat-icon>
+    </button>
+</mat-toolbar>
+<mat-progress-bar color="primary" [mode]="waitingRequest$ | async"></mat-progress-bar>
 
-<!-- Container to keep everything on the middle of the screen -->
-<div class="scroll-area-wrapper" #scrollElement>
-    <div class="centered-container">
-        <!-- Section Label -->
-        <div class="mat-h1">{{(feedService.type$ | async) | headerTitle}}</div>
-        <mat-divider></mat-divider>
+<div class="centered-container">
+    <!-- Section Label -->
+    <div class="mat-h1">{{(type$ | async) | headerTitle}}</div>
+    <mat-divider></mat-divider>
 
-        <!-- Stories List -->
-        <ng-container *ngFor="let item of feedService.stories$ | async; trackBy: idTracker">
-            <div class="story">
-                <!-- Title -->
-                <div>
-                    <a class="mat-h3" [routerLink]="[item.id]">
-                        {{item.title}}
-                    </a>
-                </div>
-                <!-- Domain -->
-                <div *ngIf="item.url">
-                    <a class="mat-body-strong" [href]="item.url" target="_blank" rel="noopener noreferrer">
-                        {{item.url | domain}}
-                    </a>
-                </div>
-                <!-- Details -->
-                <div class="details">
-                    <span>{{item.score}} points</span>
-                    <span>{{item.descendants}} comments</span>
-                    <span>By <a class="mat-body-strong">{{item.by}}</a></span>
-                    <span>From {{item.time | postFrom}}</span>
-                </div>
+    <!-- Stories List -->
+    <ng-container *ngFor="let item of stories$ | async; trackBy: idTracker">
+        <div class="story">
+            <!-- Title -->
+            <div>
+                <a class="mat-h3" (click)="navigateIntoComments(item.id)">
+                    {{item.title}}
+                </a>
             </div>
-            <mat-divider></mat-divider>
-        </ng-container>
-    </div>
-
-    <!-- Load More Button -->
-    <div class="load-more">
-        <button mat-stroked-button color="primary" class="mat-h3" (click)="appendMoreStories()">
-            Keep loading more!
-        </button>
-    </div>
+            <!-- Domain -->
+            <div *ngIf="item.url">
+                <a class="mat-body-strong" [href]="item.url" target="_blank" rel="noopener noreferrer">
+                    {{item.url | domain}}
+                </a>
+            </div>
+            <!-- Details -->
+            <div class="details">
+                <span>{{item.score}} points</span>
+                <span>{{item.descendants}} comments</span>
+                <span>By <a class="mat-body-strong">{{item.by}}</a></span>
+                <span>From {{item.time | postFrom}}</span>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+    </ng-container>
 </div>
 
-<!-- Scroll button -->
-<button mat-mini-fab class="arrow-upward" aria-label="scroll up to the top" (click)="scrollToTop()">
-    <mat-icon>arrow_upward</mat-icon>
-</button>
+<!-- Load More Button -->
+<div class="load-more">
+    <button mat-flat-button color="primary" class="mat-h3" (click)="infiniteLoad()">
+        Keep loading more!
+    </button>
+</div>
+
+<!-- Toolbar Templates -->
+<ng-template #desktopContent>
+    <button mat-button aria-label="Show Top section" (click)="switchFeed(FeedType.TOP)">
+        <span class="mat-h3"> Top </span>
+    </button>
+    <button mat-button aria-label="Show Best section" (click)="switchFeed(FeedType.BEST)">
+        <span class="mat-h3"> Best </span>
+    </button>
+    <button mat-button aria-label="Show New section" (click)="switchFeed(FeedType.NEW)">
+        <span class="mat-h3"> New </span>
+    </button>
+    <button mat-button aria-label="Show Ask section" (click)="switchFeed(FeedType.ASK)">
+        <span class="mat-h3"> Ask </span>
+    </button>
+    <button mat-button aria-label="Show Show section" (click)="switchFeed(FeedType.SHOW)">
+        <span class="mat-h3"> Show </span>
+    </button>
+    <button mat-button aria-label="Show Jobs section" (click)="switchFeed(FeedType.JOB)">
+        <span class="mat-h3"> Jobs </span>
+    </button>
+</ng-template>
+
+<ng-template #mobileContent>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Show Stories section">
+        <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="switchFeed(FeedType.TOP)">
+            <mat-icon>whatshot</mat-icon>
+            <span> Top </span>
+        </button>
+        <button mat-menu-item (click)="switchFeed(FeedType.BEST)">
+            <mat-icon>favorite</mat-icon>
+            <span> Best </span>
+        </button>
+        <button mat-menu-item (click)="switchFeed(FeedType.NEW)">
+            <mat-icon>new_releases</mat-icon>
+            <span> New </span>
+        </button>
+        <button mat-menu-item (click)="switchFeed(FeedType.ASK)">
+            <mat-icon>help</mat-icon>
+            <span> Ask </span>
+        </button>
+        <button mat-menu-item (click)="switchFeed(FeedType.SHOW)">
+            <mat-icon>preview</mat-icon>
+            <span> Show </span>
+        </button>
+        <button mat-menu-item (click)="switchFeed(FeedType.JOB)">
+            <mat-icon>work</mat-icon>
+            <span> Jobs </span>
+        </button>
+    </mat-menu>
+</ng-template>

@@ -14,7 +14,7 @@ $custom-typography: mat-typography-config(
 /* Palettes */
 // Light Palette
 $light-primary: mat-palette($mat-deep-orange, A200);
-$light-accent: mat-palette($mat-deep-orange, 600);
+$light-accent: mat-palette($mat-deep-orange, 400);
 
 $light-theme: mat-light-theme((
   color: (
@@ -25,7 +25,7 @@ $light-theme: mat-light-theme((
 
 // Dark Palette.
 $dark-primary: mat-palette($mat-indigo, A200);
-$dark-accent: mat-palette($mat-indigo, 600);
+$dark-accent: mat-palette($mat-indigo, 400);
 
 $dark-theme: mat-dark-theme((
   color: (
@@ -42,7 +42,7 @@ $dark-theme: mat-dark-theme((
 .light-theme {
   background-color: #fbe9e7;
   color: black;
-
+  scrollbar-color: light;
   a { color: black; }
   .mat-tree { background: transparent; }
 }
@@ -52,7 +52,7 @@ $dark-theme: mat-dark-theme((
   @include angular-material-color($dark-theme);
   background-color: #121C2B;
   color: white;
-
+  scrollbar-color: dark;
   a { color: white; }
   .mat-tree { background: transparent; }
 }
