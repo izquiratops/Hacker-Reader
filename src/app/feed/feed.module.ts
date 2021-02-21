@@ -5,11 +5,7 @@ import { MaterialModule } from '../material.module';
 
 import { FeedComponent } from './feed.component';
 import { CommentsComponent } from './comments/comments.component';
-import { PaddingPipe, RepliesPipe } from '../_shared/pipes';
-import { PostFromPipe } from '../_shared/pipes';
-import { HeaderPipe } from '../_shared/pipes';
-import { DomainPipe } from '../_shared/pipes';
-import { IconThemePipe } from '../_shared/pipes';
+import { PipesModule } from '../pipes.module';
 
 const routes: Routes = [
   {
@@ -25,18 +21,13 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     FeedComponent,
-    CommentsComponent,
-    DomainPipe,
-    HeaderPipe,
-    PostFromPipe,
-    RepliesPipe,
-    IconThemePipe,
-    PaddingPipe
+    CommentsComponent
   ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    MaterialModule
+    MaterialModule,
+    PipesModule
   ]
 })
 export class FeedModule { }

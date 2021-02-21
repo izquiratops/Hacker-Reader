@@ -2,14 +2,14 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import { HNService } from 'src/app/_shared/services/hn.service';
-import { SharedService } from 'src/app/_shared/services/shared.service';
-import { Animations } from 'src/app/_shared/animations';
-import { Item, ItemFlatNode } from 'src/app/_shared/interfaces';
-import { LoadState } from 'src/app/_shared/enums';
-import { palette } from 'src/app/_shared/colors';
+import { HNService } from 'src/app/shared/hn.service';
+import { SharedService } from 'src/app/shared/shared.service';
+import { Animations } from 'src/app/shared/animations';
+import { Item, ItemFlatNode } from 'src/app/shared/interfaces';
+import { LoadState } from 'src/app/shared/enums';
+import { palette } from 'src/app/shared/colors';
 
 @Component({
   selector: 'app-comments',
@@ -19,7 +19,7 @@ import { palette } from 'src/app/_shared/colors';
 })
 export class CommentsComponent implements OnInit {
 
-  @ViewChild('scrollElement', { static: true }) scrollElement: ElementRef;
+  @ViewChild('scrollElement', { static: true }) scrollEl: ElementRef;
 
   private readonly transformer = (node: Item, level: number): ItemFlatNode => {
     return {
@@ -41,25 +41,28 @@ export class CommentsComponent implements OnInit {
     node => node.replies
   );
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-  
-  waitingRequest$: BehaviorSubject<LoadState>;
+
+  loadState$: BehaviorSubject<LoadState>;
+  currentItem$: Observable<Item>;
 
   constructor(
     private route: ActivatedRoute,
     private hn: HNService,
     public shared: SharedService
   ) {
-    this.waitingRequest$ = new BehaviorSubject<LoadState>(LoadState.WAITING);
+    this.loadState$ = new BehaviorSubject<LoadState>(LoadState.WAITING);
   }
 
   ngOnInit() {
     const id: string = this.route.snapshot.params.id;
 
-    this.hn.getStoryComments(+id).subscribe((comments: Item[]) => {
-      this.dataSource.data = comments;
-      this.treeControl.expandAll();
-      this.waitingRequest$.next(LoadState.IDLE);
-    });
+    this.currentItem$ = this.hn.getItem(+id);
+    this.hn.getStoryComments(this.currentItem$)
+      .subscribe((comments: Item[]) => {
+        this.dataSource.data = comments;
+        this.treeControl.expandAll();
+        this.loadState$.next(LoadState.IDLE);
+      });
   }
 
   hasChild = (_: number, node: ItemFlatNode) => node.expandable;

@@ -1,38 +1,81 @@
+<!-- Nav -->
 <mat-toolbar color="primary">
     <button mat-icon-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon>
     </button>
+
+    <!-- Buttons at the end -->
+    <span class="spacer"></span>
+    <button mat-icon-button aria-label="Switch between Light/Dark theme" (click)="shared.switchTheme()">
+        <mat-icon>{{(shared.currentTheme$ | async) | iconTheme}}</mat-icon>
+    </button>
 </mat-toolbar>
+<mat-progress-bar color="primary" [mode]="loadState$ | async"></mat-progress-bar>
 
-<mat-progress-bar color="primary" [mode]="waitingRequest$ | async"></mat-progress-bar>
+<!-- Comments -->
+<div class="scroll-element" #scrollElement>
+    <div class="centered-container">
+        <!-- Header -->
+        <ng-container *ngTemplateOutlet="itemHeader; context: {item: currentItem$ | async}"></ng-container>
+        <mat-divider></mat-divider>
 
-<div class="centered-container">
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-        <!-- This is the tree node template for leaf nodes -->
-        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding
-            [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
-            <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}">
-                <div class="details">
-                    <span>By <a class="mat-body-strong">{{node.by}}</a></span>
-                    <span>From {{node.time | postFrom}}</span>
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <!-- This is the tree node template for leaf nodes -->
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding
+                [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
+                <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}">
+                    <div class="details">
+                        <span>By <a class="mat-body-strong">{{node.by}}</a></span>
+                        <span>From {{node.time | postFrom}}</span>
+                    </div>
+                    <div class="mat-body" [innerHTML]="node.text"></div>
                 </div>
-                <div class="postBody" [innerHTML]="node.text"></div>
-            </div>
-        </mat-tree-node>
+            </mat-tree-node>
 
-        <!-- This is the tree node template for expandable nodes -->
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding
-            [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
-            <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}" matTreeNodeToggle>
-                <div class="details">
-                    <span>By <a class="mat-body-strong">{{node.by}}</a></span>
-                    <span>From {{node.time | postFrom}}</span>
-                    <span [hidden]="treeControl.isExpanded(node)">
-                        {{node.kids.length | replies}}
-                    </span>
+            <!-- This is the tree node template for expandable nodes -->
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding
+                [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
+                <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}" matTreeNodeToggle>
+                    <div class="details">
+                        <span>By <a class="mat-body-strong">{{node.by}}</a></span>
+                        <span>From {{node.time | postFrom}}</span>
+                        <span [hidden]="treeControl.isExpanded(node)">
+                            {{node.kids.length | replies}}
+                        </span>
+                    </div>
+                    <div class="mat-body" [innerHTML]="node.text"></div>
                 </div>
-                <div [innerHTML]="node.text"></div>
-            </div>
-        </mat-tree-node>
-    </mat-tree>
+            </mat-tree-node>
+        </mat-tree>
+    </div>
 </div>
+
+<ng-template #itemHeader let-item="item">
+    <div class="story" *ngIf="item">
+        <!-- Title -->
+        <div>
+            <a class="mat-h2" (click)="navigateIntoComments(item.id)">
+                {{item.title}}
+            </a>
+        </div>
+        <!-- Domain -->
+        <div *ngIf="item.url">
+            <a class="mat-h3" [href]="item.url" target="_blank" rel="noopener noreferrer">
+                {{item.url | domain}}
+            </a>
+        </div>
+        <!-- Details -->
+        <div class="details mat-body">
+            <span>{{item.score}} points</span>
+            <span>{{item.descendants}} comments</span>
+            <span>By {{item.by}}</span>
+            <span>From {{item.time | postFrom}}</span>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Scroll up button -->
+<button mat-mini-fab aria-label="Scroll up to the top" (click)="scrollEl.nativeElement.scrollTop = 0"
+    class="arrow-upward">
+    <mat-icon>arrow_upward</mat-icon>
+</button>

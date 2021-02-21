@@ -87,7 +87,6 @@ export class IconThemePipe implements PipeTransform {
 @Pipe({ name: 'commentPadding' })
 export class PaddingPipe implements PipeTransform {
     transform(value: boolean): number {
-        // easy, mobile? 30 no mobile? 10
         if (value) {
             return 10;
         } else {

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
-import { SharedService } from './_shared/services/shared.service';
+import { SharedService } from './shared/shared.service';
 
 @Component({
   selector: 'app-root',
@@ -17,9 +17,8 @@ export class AppComponent {
   constructor(
     public shared: SharedService
   ) {
-    this.shared.currentTheme$.subscribe(
-      (theme: string) => this.componentCssClass = theme
-    );
+    this.shared.currentTheme$
+      .subscribe((theme: string) => this.componentCssClass = theme);
   }
 
   /**
@@ -30,9 +29,4 @@ export class AppComponent {
   onWindowResize(event: any): void {
     this.shared.isMobile$.next(event.target.innerWidth < this.shared.mobileThreshold);
   }
-
-  scrollToTop() {
-    this.shared.scrollUp$.next();
-  }
-
 }

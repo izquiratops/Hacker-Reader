@@ -3,15 +3,14 @@ import { RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
-import { MaterialModule } from './material.module';
 
 import { AppComponent } from './app.component';
 
-import { HNService } from './_shared/services/hn.service';
-import { SharedService } from './_shared/services/shared.service';
+import { HNService } from './shared/hn.service';
+import { SharedService } from './shared/shared.service';
 
 import { environment } from 'src/environments/environment';
-import { CustomReuseStrategy } from './routing';
+import { CustomReuseStrategy } from './shared/routing';
 
 const routes: Routes = [
   {
@@ -28,7 +27,6 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MaterialModule,
     RouterModule.forRoot(routes),
     AngularFireModule.initializeApp(environment.firebase)
   ],

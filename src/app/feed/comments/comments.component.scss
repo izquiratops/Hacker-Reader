@@ -1,17 +1,25 @@
 :host {
     display: flex;
     flex-direction: column;
-    overflow: auto;
-    scroll-behavior: smooth;
+    overflow: hidden;
+    height: 100%;
 }
 
-.mat-progress-bar { position: sticky; top: 0 }
+.mat-divider {
+    margin: 24px 0;
+}
 
 .comment-wrapper {
-    overflow-y: scroll;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     margin: 0.6rem;
     padding: 0 12px;
-    border-left: 3px solid black;
+    border-left: 3px solid;
+}
+
+.arrow-upward { 
+    position: absolute; 
+    bottom: 1rem; 
+    right: 1.75rem; 
 }

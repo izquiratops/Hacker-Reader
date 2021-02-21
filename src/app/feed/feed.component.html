@@ -1,52 +1,63 @@
+<!-- Nav -->
 <mat-toolbar color="primary">
     <!-- If route is '/' then show Feed buttons, else Comments buttons -->
     <ng-container *ngIf="(shared.isMobile$ | async); then mobileContent else desktopContent"></ng-container>
+
     <!-- Buttons at the end -->
     <span class="spacer"></span>
     <button mat-icon-button aria-label="Switch between Light/Dark theme" (click)="shared.switchTheme()">
         <mat-icon>{{(shared.currentTheme$ | async) | iconTheme}}</mat-icon>
     </button>
 </mat-toolbar>
-<mat-progress-bar color="primary" [mode]="waitingRequest$ | async"></mat-progress-bar>
+<mat-progress-bar color="primary" [mode]="loadState$ | async"></mat-progress-bar>
 
-<div class="centered-container">
-    <!-- Section Label -->
-    <div class="mat-h1">{{(type$ | async) | headerTitle}}</div>
-    <mat-divider></mat-divider>
-
-    <!-- Stories List -->
-    <ng-container *ngFor="let item of stories$ | async; trackBy: idTracker">
-        <div class="story">
-            <!-- Title -->
-            <div>
-                <a class="mat-h3" (click)="navigateIntoComments(item.id)">
-                    {{item.title}}
-                </a>
-            </div>
-            <!-- Domain -->
-            <div *ngIf="item.url">
-                <a class="mat-body-strong" [href]="item.url" target="_blank" rel="noopener noreferrer">
-                    {{item.url | domain}}
-                </a>
-            </div>
-            <!-- Details -->
-            <div class="details">
-                <span>{{item.score}} points</span>
-                <span>{{item.descendants}} comments</span>
-                <span>By <a class="mat-body-strong">{{item.by}}</a></span>
-                <span>From {{item.time | postFrom}}</span>
-            </div>
-        </div>
+<!-- Stories List -->
+<div class="scroll-element" #scrollElement>
+    <div class="centered-container">
+        <!-- Section Label -->
+        <div class="mat-h1">{{(type$ | async) | headerTitle}}</div>
         <mat-divider></mat-divider>
-    </ng-container>
+
+        <!-- Items -->
+        <ng-container *ngFor="let item of stories$ | async; trackBy: idTracker">
+            <div class="story">
+                <!-- Title -->
+                <div>
+                    <a class="mat-h2" (click)="navigateIntoComments(item.id)">
+                        {{item.title}}
+                    </a>
+                </div>
+                <!-- Domain -->
+                <div *ngIf="item.url">
+                    <a class="mat-h3" [href]="item.url" target="_blank" rel="noopener noreferrer">
+                        {{item.url | domain}}
+                    </a>
+                </div>
+                <!-- Details -->
+                <div class="details mat-body">
+                    <span>{{item.score}} points</span>
+                    <span>{{item.descendants}} comments</span>
+                    <span>By {{item.by}}</span>
+                    <span>From {{item.time | postFrom}}</span>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+        </ng-container>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="load-more">
+        <button mat-flat-button color="primary" class="mat-h3" (click)="infiniteLoad()">
+            Keep loading more!
+        </button>
+    </div>
 </div>
 
-<!-- Load More Button -->
-<div class="load-more">
-    <button mat-flat-button color="primary" class="mat-h3" (click)="infiniteLoad()">
-        Keep loading more!
-    </button>
-</div>
+<!-- Scroll up button -->
+<button mat-mini-fab aria-label="Scroll up to the top" (click)="scrollEl.nativeElement.scrollTop = 0"
+    class="arrow-upward">
+    <mat-icon>arrow_upward</mat-icon>
+</button>
 
 <!-- Toolbar Templates -->
 <ng-template #desktopContent>

@@ -1,17 +1,18 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Subject } from "rxjs";
-import { Theme } from "../enums";
+import { BehaviorSubject } from "rxjs";
+import { Theme } from "./enums";
 
 @Injectable()
 export class SharedService {
 
+  /**
+   * This service is used to take care of mobile layout and theme events.
+   */
   readonly mobileThreshold: number = 760;
-  scrollUp$: Subject<void>;
-  currentTheme$: BehaviorSubject<string>;
   isMobile$: BehaviorSubject<boolean>;
+  currentTheme$: BehaviorSubject<string>;
 
   constructor() {
-    this.scrollUp$ = new Subject<void>();
     this.currentTheme$ = new BehaviorSubject<string>(this.getFromStorage());
     this.isMobile$ = new BehaviorSubject<boolean>(window.innerWidth < this.mobileThreshold);
   }

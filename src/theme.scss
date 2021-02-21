@@ -7,6 +7,9 @@
 
 $custom-typography: mat-typography-config(
   $font-family: 'Inter, Roboto, monospace',
+  $headline: mat-typography-level(24px, 24px, 500), // H1
+  $title: mat-typography-level(18px, 24px, 500),    // H2
+  $body-1: mat-typography-level(15px, 20px, 400),
 );
 
 @include mat-base-typography($custom-typography);
@@ -40,7 +43,7 @@ $dark-theme: mat-dark-theme((
 /* Themes */
 // Light Theme
 .light-theme {
-  background-color: #fbe9e7;
+  background-color: #edf6f9;
   color: black;
   scrollbar-color: light;
   a { color: black; }

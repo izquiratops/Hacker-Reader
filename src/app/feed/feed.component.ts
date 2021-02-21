@@ -3,11 +3,11 @@ import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { scan } from 'rxjs/operators';
 
-import { HNService } from '../_shared/services/hn.service';
-import { SharedService } from '../_shared/services/shared.service';
-import { Animations } from '../_shared/animations';
-import { Item } from '../_shared/interfaces';
-import { FeedType, LoadState } from '../_shared/enums';
+import { HNService } from '../shared/hn.service';
+import { SharedService } from '../shared/shared.service';
+import { Animations } from '../shared/animations';
+import { Item } from '../shared/interfaces';
+import { FeedType, LoadState } from '../shared/enums';
 
 @Component({
   selector: 'app-feed',
@@ -17,10 +17,11 @@ import { FeedType, LoadState } from '../_shared/enums';
 })
 export class FeedComponent implements OnInit {
 
+  @ViewChild('scrollElement', {static: true}) scrollEl: ElementRef;
+
   // Page context
-  @ViewChild('scrollElement', { static: true }) scrollElement: ElementRef;
   scrollTop: number = 0;
-  waitingRequest$: BehaviorSubject<LoadState>;
+  loadState$: BehaviorSubject<LoadState>;
 
   // Stories
   FeedType = FeedType;
@@ -30,26 +31,22 @@ export class FeedComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private host: ElementRef,
     private hn: HNService,
     public shared: SharedService
   ) {
-    this.waitingRequest$ = new BehaviorSubject<LoadState>(LoadState.WAITING);
+    this.loadState$ = new BehaviorSubject<LoadState>(LoadState.WAITING);
     this.type$ = new BehaviorSubject<FeedType>(FeedType.TOP);
     this.ids$ = new BehaviorSubject<number[]>([]);
     this.stories$ = new BehaviorSubject<Item[]>([]);
-
-    // Listener to get scroll all the way up.
-    this.shared.scrollUp$.subscribe(() => this.host.nativeElement.scrollTop = 0);
 
     // Listener to save the current scroll position when navigates into comments.
     this.router.events.subscribe((event) => {
       // Apply scroll when navigate back
       if (event instanceof NavigationEnd && event.url === '/') {
         // Disable smooth behavior to avoid scroll animations on resume
-        this.host.nativeElement.style.setProperty('scroll-behavior', 'initial');
-        this.host.nativeElement.scrollTop = this.scrollTop;
-        this.host.nativeElement.style.setProperty('scroll-behavior', 'smooth');
+        this.scrollEl.nativeElement.style.setProperty('scroll-behavior', 'initial');
+        this.scrollEl.nativeElement.scrollTop = this.scrollTop;
+        this.scrollEl.nativeElement.style.setProperty('scroll-behavior', 'smooth');
       }
     });
   }
@@ -68,8 +65,8 @@ export class FeedComponent implements OnInit {
    * Saves current scroll state and navigates into Comments.
    * @param id ID of the story
    */
-  navigateIntoComments(id: number) {
-    this.scrollTop = this.host.nativeElement.scrollTop;
+  navigateIntoComments(id: number): void {
+    this.scrollTop = this.scrollEl.nativeElement.scrollTop;
     this.router.navigate([id]);
   }
 
@@ -78,8 +75,8 @@ export class FeedComponent implements OnInit {
    * 
    * @param type Kind of feed
    */
-  switchFeed(type: FeedType) {
-    this.waitingRequest$.next(LoadState.WAITING);
+  switchFeed(type: FeedType): void {
+    this.loadState$.next(LoadState.WAITING);
     this.stories$.next([]);
     this.type$.next(type);
     this.loadStories();
@@ -88,7 +85,7 @@ export class FeedComponent implements OnInit {
   /**
    * Loads the first page (30 items) of the current type (Top Stories by default).
    */
-  loadStories() {
+  loadStories(): void {
     this.hn.getStoryIndices(this.type$.getValue()).subscribe((ids: number[]) => {
       // Save IDs
       this.ids$.next(ids);
@@ -96,7 +93,7 @@ export class FeedComponent implements OnInit {
       const stories: Item[] = this.stories$.getValue();
       this.hn.getItemsContent(ids, stories.length).subscribe((stories: Item[]) => {
         this.stories$.next(stories);
-        this.waitingRequest$.next(LoadState.IDLE);
+        this.loadState$.next(LoadState.IDLE);
       });
     })
   }
@@ -104,15 +101,15 @@ export class FeedComponent implements OnInit {
   /**
    * Keeps requesting items, appends 30 more into the list.
    */
-  infiniteLoad() {
+  infiniteLoad(): void {
     const stories: Item[] = this.stories$.getValue();
-    this.waitingRequest$.next(LoadState.WAITING);
+    this.loadState$.next(LoadState.WAITING);
 
     this.hn.getItemsContent(this.ids$.getValue(), stories.length).pipe(
       scan((curr, appendedStories) => [...curr, ...appendedStories], this.stories$.value)
     ).subscribe((stories: Item[]) => {
       this.stories$.next(stories);
-      this.waitingRequest$.next(LoadState.IDLE);
+      this.loadState$.next(LoadState.IDLE);
     });
   };
 }

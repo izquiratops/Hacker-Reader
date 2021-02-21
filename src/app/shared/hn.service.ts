@@ -4,8 +4,8 @@ import { AngularFireDatabase } from "@angular/fire/database";
 import { from, of, Observable, EMPTY } from "rxjs";
 import { filter, map, concatMap, mergeMap, reduce, expand, pluck, first, tap } from "rxjs/operators";
 
-import { FeedType } from "../enums";
-import { Item, ItemType } from "../interfaces";
+import { FeedType } from "./enums";
+import { Item, ItemType } from "./interfaces";
 
 /**
  * ✨ DOCS! ✨
@@ -60,8 +60,8 @@ export class HNService {
             );
     }
 
-    getStoryComments(id: number) {
-        return from(this.getItem(id)).pipe(
+    getStoryComments(item$: Observable<Item>) {
+        return from(item$).pipe(
             concatMap((story: Item) => story.kids),
             mergeMap((id: number) => this.getRecursiveReplies(id)),
             reduce((arr: Item[], content: Item) => {

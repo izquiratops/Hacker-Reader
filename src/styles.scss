@@ -1,10 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; overflow: hidden; }
-body { margin: 0; }
-a { text-decoration: underline; cursor: pointer; }
+html, body { 
+    height: 100%; 
+    overflow: hidden;
+}
+body { 
+    margin: 0; 
+    text-rendering: optimizeLegibility;
+}
+a { 
+    cursor: pointer; 
+}
+
 // Material
-.mat-toolbar, .mat-progress-bar { flex-shrink: 0; }
+.mat-toolbar, .mat-progress-bar { 
+    flex-shrink: 0; 
+}
 
 // Shared properties
 .details {
@@ -14,7 +25,15 @@ a { text-decoration: underline; cursor: pointer; }
 
     span { margin-right: 8px; }
 }
-.spacer { flex-grow: 1; min-width: 12px; }
+.spacer { 
+    flex-grow: 1; 
+    min-width: 12px;
+}
+.scroll-element {
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    height: 100%;
+}
 .centered-container {
     box-sizing: border-box;
     margin: auto;
@@ -25,8 +44,19 @@ a { text-decoration: underline; cursor: pointer; }
     max-width: 1100px;
     width: 100%;
 }
+.story { 
+    display: flex;
+    flex-direction: column;
+    margin: 8px 0;
 
-// Mobile version with narrower paddings
+    div:not(:first-child) {
+        margin-top: 4px;
+    }
+}
+
+
+// Mobile version with narrower paddings. Some changes are applied via JS (!).
+// That max-width value should match with the Shared Service var.
 @media screen and (max-width: 760px) {
     .centered-container {
         padding-left: 1.4rem;
