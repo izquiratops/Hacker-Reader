@@ -4,10 +4,12 @@ html, body {
     height: 100%; 
     overflow: hidden;
 }
+
 body { 
     margin: 0; 
     text-rendering: optimizeLegibility;
 }
+
 a { 
     cursor: pointer; 
 }
@@ -25,15 +27,25 @@ a {
 
     span { margin-right: 8px; }
 }
+
+.chip-icon {
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .spacer { 
     flex-grow: 1; 
     min-width: 12px;
 }
+
 .scroll-element {
     overflow-y: scroll;
     scroll-behavior: smooth;
     height: 100%;
 }
+
 .centered-container {
     box-sizing: border-box;
     margin: auto;
@@ -44,13 +56,15 @@ a {
     max-width: 1100px;
     width: 100%;
 }
+
 .story { 
     display: flex;
     flex-direction: column;
     margin: 8px 0;
+    gap: 6px;
 
     div:not(:first-child) {
-        margin-top: 4px;
+        margin-top: 6px;
     }
 }
 

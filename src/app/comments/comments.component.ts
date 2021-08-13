@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 
 import { HNService } from 'src/app/shared/hn.service';
 import { SharedService } from 'src/app/shared/shared.service';
@@ -45,32 +45,32 @@ export class CommentsComponent implements OnInit {
 
   // Comments context (UI Bindings)
   currentItem$: Observable<Item>;
-  loadState$: BehaviorSubject<LoadState>;
-  emptyItem$: BehaviorSubject<boolean>;
+  loadState = LoadState.WAITING;
+  emptyItem = false;
 
   constructor(
     private route: ActivatedRoute,
     private hn: HNService,
     public shared: SharedService
   ) {
-    this.loadState$ = new BehaviorSubject<LoadState>(LoadState.WAITING);
-    this.emptyItem$ = new BehaviorSubject<boolean>(false);
   }
 
   ngOnInit() {
     const id: string = this.route.snapshot.params.id;
 
+    this.loadState = LoadState.WAITING;
     this.currentItem$ = this.hn.getItem(+id);
-    this.hn.getStoryComments(this.currentItem$).subscribe((comments: Item[]) => {
+    this.hn.getStoryComments(this.currentItem$)
+    .pipe(
+      finalize(() => this.loadState = LoadState.IDLE)
+    )
+    .subscribe((comments: Item[]) => {
       if (comments.length === 0) {
-        // Oopsie no comments!
-        this.emptyItem$.next(true);
+        this.emptyItem = true;
       } else {
         this.dataSource.data = comments;
         this.treeControl.expandAll();
       }
-
-      this.loadState$.next(LoadState.IDLE);
     });
   }
 

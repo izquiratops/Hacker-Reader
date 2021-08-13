@@ -4,7 +4,7 @@
         <mat-icon>arrow_back</mat-icon>
     </button>
 </mat-toolbar>
-<mat-progress-bar color="primary" [mode]="loadState$ | async"></mat-progress-bar>
+<mat-progress-bar color="primary" [mode]="loadState"></mat-progress-bar>
 
 <!-- Comments -->
 <div class="scroll-element" #scrollElement>
@@ -16,7 +16,7 @@
         <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
             <!-- This is the tree node template for leaf nodes -->
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding
-                [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
+                [matTreeNodePaddingIndent]="shared.isMobile$ | async | commentPadding">
                 <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}">
                     <div class="details" @showItem>
                         <span>By <span class="mat-body-strong">{{node.by}}</span></span>
@@ -28,7 +28,7 @@
 
             <!-- This is the tree node template for expandable nodes -->
             <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding
-                [matTreeNodePaddingIndent]="(shared.isMobile$ | async) | commentPadding">
+                [matTreeNodePaddingIndent]="shared.isMobile$ | async | commentPadding">
                 <div class="comment-wrapper" [ngStyle]="{'border-color': node.color}" matTreeNodeToggle>
                     <div class="details" @showItem>
                         <span>By <a class="mat-body-strong">{{node.by}}</a></span>
@@ -43,31 +43,43 @@
         </mat-tree>
 
         <!-- No comments message -->
-        <ng-container *ngIf="(emptyItem$ | async); then emptyComments"></ng-container>
+        <ng-container *ngIf="emptyItem; then emptyComments"></ng-container>
     </div>
 </div>
 
 <ng-template #itemHeader let-item="item">
-    <div class="story" *ngIf="item">
+    <div class="story" *ngIf="item" @showItem>
         <!-- Title -->
-        <div @showItem>
+        <div>
             <a class="mat-h2">
                 {{item.title}}
             </a>
         </div>
         <!-- Domain -->
-        <div *ngIf="item.url" @showItem>
+        <div *ngIf="item.url">
             <a class="mat-h3" [href]="item.url" target="_blank" rel="noopener noreferrer">
                 {{item.url | domain}}
             </a>
         </div>
         <!-- Details -->
-        <div class="details mat-body" @showItem>
-            <span>{{item.score}} points</span>
-            <span>{{item.descendants}} comments</span>
-            <span>By {{item.by}}</span>
-            <span>From {{item.time | postFrom}}</span>
-        </div>
+        <mat-chip-list aria-label="Description">
+            <mat-chip>
+                <mat-icon class="chip-icon">favorite</mat-icon>
+                {{item.score}}
+            </mat-chip>
+            <mat-chip>
+                <mat-icon class="chip-icon">forum</mat-icon>
+                {{item.descendants}}
+            </mat-chip>
+            <mat-chip>
+                <mat-icon class="chip-icon">face</mat-icon>
+                {{item.by}}
+            </mat-chip>
+            <mat-chip>
+                <mat-icon class="chip-icon">schedule</mat-icon>
+                {{item.time | postFrom}}
+            </mat-chip>
+        </mat-chip-list>
     </div>
 </ng-template>
 

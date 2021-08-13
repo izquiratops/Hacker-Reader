@@ -5,12 +5,15 @@ import { Theme } from "./enums";
 @Injectable()
 export class SharedService {
 
+  readonly WIDTH_THRESHOLD = 760;
+
+  isDarkTheme$: BehaviorSubject<boolean>;
   isMobile$: BehaviorSubject<boolean>;
-  currentTheme$: BehaviorSubject<string>;
 
   constructor() {
-    this.currentTheme$ = new BehaviorSubject<string>(localStorage.getItem('theme') ?? Theme.LIGHT);
-    this.isMobile$ = new BehaviorSubject<boolean>(window.innerWidth < 760);
+    const localValue = (localStorage.getItem('theme') ?? Theme.LIGHT) == Theme.DARK;
+    this.isDarkTheme$ = new BehaviorSubject(localValue);
+    this.isMobile$ = new BehaviorSubject(window.innerWidth < this.WIDTH_THRESHOLD);
   }
 
 }

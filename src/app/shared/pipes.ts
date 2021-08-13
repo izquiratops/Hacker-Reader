@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FeedType, FeedTypeLabel, Theme, ThemeIcon } from './enums';
+import { ThemeIcon } from './enums';
 
 @Pipe({ name: 'domain' })
 export class DomainPipe implements PipeTransform {
@@ -48,38 +48,23 @@ export class PostFromPipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'headerTitle' })
-export class HeaderPipe implements PipeTransform {
-    transform(value: FeedType): FeedTypeLabel {
-        switch (value) {
-            case FeedType.TOP:
-                return FeedTypeLabel.TOP;
-            case FeedType.BEST:
-                return FeedTypeLabel.BEST;
-            case FeedType.NEW:
-                return FeedTypeLabel.NEW;
-            case FeedType.SHOW:
-                return FeedTypeLabel.SHOW;
-            case FeedType.ASK:
-                return FeedTypeLabel.ASK;
-            case FeedType.JOB:
-                return FeedTypeLabel.JOB;
-            default:
-                return FeedTypeLabel.TOP;
-        }
+@Pipe({ name: 'formatTitle' })
+export class FormatTitlePipe implements PipeTransform {
+    transform(type: string): string {
+        // input: topstories
+        const label = type.split('stories');
+        // output: Top Stories
+        return label[0].charAt(0).toLocaleUpperCase() + label[0].slice(1) + ' Stories';
     }
 }
 
 @Pipe({ name: 'iconTheme' })
 export class IconThemePipe implements PipeTransform {
-    transform(value: string): ThemeIcon {
-        switch (value) {
-            case Theme.DARK:
-                return ThemeIcon.DARK;
-            case Theme.LIGHT:
-                return ThemeIcon.LIGHT;
-            default:
-                return ThemeIcon.LIGHT;
+    transform(value: boolean): ThemeIcon {
+        if (value) {
+            return ThemeIcon.DARK;
+        } else {
+            return ThemeIcon.LIGHT;
         }
     }
 }

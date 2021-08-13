@@ -6,40 +6,52 @@
     <!-- Buttons at the end -->
     <span class="spacer"></span>
     <button mat-icon-button aria-label="Switch between Light/Dark theme" (click)="switchTheme()">
-        <mat-icon>{{(shared.currentTheme$ | async) | iconTheme}}</mat-icon>
+        <mat-icon>{{shared.isDarkTheme$ | async | iconTheme}}</mat-icon>
     </button>
 </mat-toolbar>
-<mat-progress-bar color="primary" [mode]="loadState$ | async"></mat-progress-bar>
+<mat-progress-bar color="primary" [mode]="loadState"></mat-progress-bar>
 
 <!-- Stories List -->
 <div class="scroll-element" #scrollElement>
     <div class="centered-container">
         <!-- Section Label -->
-        <div class="mat-h1">{{(type$ | async) | headerTitle}}</div>
-        <mat-divider></mat-divider>
+        <div class="mat-h1">{{type | formatTitle}}</div>
 
         <!-- Items -->
-        <ng-container *ngFor="let item of stories$ | async; trackBy: idTracker">
-            <div class="story">
+        <ng-container *ngFor="let item of stories; trackBy: idTracker">
+            <div class="story" @showItem>
                 <!-- Title -->
-                <div @showItem>
+                <div>
                     <a class="mat-h2" (click)="navigateIntoComments(item.id)">
                         {{item.title}}
                     </a>
                 </div>
                 <!-- Domain -->
-                <div *ngIf="item.url" @showItem>
-                    <a class="mat-h3" [href]="item.url" target="_blank" rel="noopener noreferrer">
+                <div *ngIf="item.url">
+                    <mat-chip color="primary" [href]="item.url" target="_blank" rel="noopener noreferrer">
+                        <mat-icon class="chip-icon">link</mat-icon>
                         {{item.url | domain}}
-                    </a>
+                    </mat-chip>
                 </div>
                 <!-- Details -->
-                <div class="details mat-body" @showItem>
-                    <span>{{item.score}} points</span>
-                    <span>{{item.descendants}} comments</span>
-                    <span>By <span class="mat-body-strong">{{item.by}}</span></span>
-                    <span>From {{item.time | postFrom}}</span>
-                </div>
+                <mat-chip-list aria-label="Description">
+                    <mat-chip disabled>
+                        <mat-icon class="chip-icon">favorite</mat-icon>
+                        {{item.score}}
+                    </mat-chip>
+                    <mat-chip>
+                        <mat-icon class="chip-icon">forum</mat-icon>
+                        {{item.descendants}}
+                    </mat-chip>
+                    <mat-chip>
+                        <mat-icon class="chip-icon">face</mat-icon>
+                        {{item.by}}
+                    </mat-chip>
+                    <mat-chip>
+                        <mat-icon class="chip-icon">schedule</mat-icon>
+                        {{item.time | postFrom}}
+                    </mat-chip>
+                </mat-chip-list>
             </div>
             <mat-divider></mat-divider>
         </ng-container>
@@ -47,9 +59,9 @@
 
     <!-- Load More Button -->
     <!-- Hidden doesn't work ¿why? [hidden]="(loadState$ | async) === LoadState.WAITING" -->
-    <div class="load-more" *ngIf="(loadState$ | async) === LoadState.IDLE">
+    <div class="load-more" *ngIf="loadState === LoadState.IDLE">
         <button mat-flat-button color="primary" class="mat-h3" (click)="infiniteLoad()">
-            Keep loading more!
+            Load next page
         </button>
     </div>
 </div>
@@ -62,24 +74,11 @@
 
 <!-- Toolbar Templates -->
 <ng-template #desktopContent>
-    <button mat-button aria-label="Show Top section" (click)="setFeedType(FeedType.TOP)">
-        <span class="mat-h3"> Top </span>
-    </button>
-    <button mat-button aria-label="Show Best section" (click)="setFeedType(FeedType.BEST)">
-        <span class="mat-h3"> Best </span>
-    </button>
-    <button mat-button aria-label="Show New section" (click)="setFeedType(FeedType.NEW)">
-        <span class="mat-h3"> New </span>
-    </button>
-    <button mat-button aria-label="Show Ask section" (click)="setFeedType(FeedType.ASK)">
-        <span class="mat-h3"> Ask </span>
-    </button>
-    <button mat-button aria-label="Show Show section" (click)="setFeedType(FeedType.SHOW)">
-        <span class="mat-h3"> Show </span>
-    </button>
-    <button mat-button aria-label="Show Jobs section" (click)="setFeedType(FeedType.JOB)">
-        <span class="mat-h3"> Jobs </span>
-    </button>
+    <ng-container *ngFor="let label of LABELS; let i = index">
+        <button mat-button aria-label="'Show ${TYPES[i]} section'" (click)="setFeedType(TYPES[i])">
+            <span class="mat-h3"> {{ label }} </span>
+        </button>
+    </ng-container>
 </ng-template>
 
 <ng-template #mobileContent>
@@ -88,29 +87,9 @@
     </button>
 
     <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="setFeedType(FeedType.TOP)">
+        <button mat-menu-item (click)="setFeedType('topstories')">
             <mat-icon>whatshot</mat-icon>
             <span> Top </span>
-        </button>
-        <button mat-menu-item (click)="setFeedType(FeedType.BEST)">
-            <mat-icon>favorite</mat-icon>
-            <span> Best </span>
-        </button>
-        <button mat-menu-item (click)="setFeedType(FeedType.NEW)">
-            <mat-icon>new_releases</mat-icon>
-            <span> New </span>
-        </button>
-        <button mat-menu-item (click)="setFeedType(FeedType.ASK)">
-            <mat-icon>help</mat-icon>
-            <span> Ask </span>
-        </button>
-        <button mat-menu-item (click)="setFeedType(FeedType.SHOW)">
-            <mat-icon>preview</mat-icon>
-            <span> Show </span>
-        </button>
-        <button mat-menu-item (click)="setFeedType(FeedType.JOB)">
-            <mat-icon>work</mat-icon>
-            <span> Jobs </span>
         </button>
     </mat-menu>
 </ng-template>

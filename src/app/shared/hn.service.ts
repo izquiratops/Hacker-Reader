@@ -4,7 +4,6 @@ import { AngularFireDatabase } from "@angular/fire/database";
 import { from, Observable, EMPTY } from "rxjs";
 import { filter, map, concatMap, mergeMap, reduce, expand, pluck, first, tap } from "rxjs/operators";
 
-import { FeedType } from "./enums";
 import { Item, ItemType } from "./interfaces";
 
 /**
@@ -31,7 +30,7 @@ export class HNService {
         );
     }
 
-    getStoryIndices(type: FeedType): Observable<number[]> {
+    getStoryIndices(type: string): Observable<number[]> {
         return this.db.list<number>('/v0', ref => ref.child(type))
             .valueChanges()
             .pipe(
@@ -83,7 +82,7 @@ export class HNService {
                 first(),
                 filter((item: Item) => (item !== null) && !item.deleted),
                 map((item: Item) => {
-                    // No kids -> Empty list
+                    // Items must have a 'kids' property with [] as default value.
                     !("kids" in item) && ((item as Item).kids = []);
                     // Comments must have a 'replies' property with [] as default value.
                     (item.type === ItemType.comment) && (item.replies = []);

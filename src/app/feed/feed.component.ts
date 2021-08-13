@@ -1,11 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { scan} from 'rxjs/operators';
+import { finalize, scan} from 'rxjs/operators';
 
 import { HNService } from '../shared/hn.service';
 import { SharedService } from '../shared/shared.service';
-import { FeedType, LoadState, Theme } from '../shared/enums';
+import { LoadState } from '../shared/enums';
 import { Item } from '../shared/interfaces';
 import { Animations } from '../shared/animations';
 
@@ -19,17 +18,21 @@ export class FeedComponent implements OnInit {
 
   @ViewChild('scrollElement', { static: true }) scrollEl: ElementRef;
 
+  readonly ITEMS_PER_PAGE = 30;
+  readonly TYPES = ['topstories', 'beststories', 'newstories', 'askstories', 'showstories', 'jobstories']
+  readonly LABELS = ['Top', 'Best', 'New', 'Ask', 'Show', 'Job']
+
+
   // Page context
   page: number = 0;
   scrollTop: number = 0;
-  loadState$: BehaviorSubject<LoadState>;
+  loadState: LoadState = LoadState.WAITING;
 
   // Stories
+  type: string = this.TYPES[0];
   ids: number[] = [];
-  type$: BehaviorSubject<FeedType>;
-  stories$: BehaviorSubject<Item[]>;
+  stories: Item[] = [];
 
-  FeedType = FeedType;
   LoadState = LoadState;
 
   constructor(
@@ -37,10 +40,9 @@ export class FeedComponent implements OnInit {
     private hn: HNService,
     public shared: SharedService
   ) {
-    this.loadState$ = new BehaviorSubject<LoadState>(LoadState.WAITING);
-    this.type$ = new BehaviorSubject<FeedType>(FeedType.TOP);
-    this.stories$ = new BehaviorSubject<Item[]>([]);
+  }
 
+  ngOnInit() {
     // Listener to save the current scroll position when navigates into comments.
     this.router.events.subscribe((event) => {
       // Apply scroll when navigate back
@@ -51,21 +53,17 @@ export class FeedComponent implements OnInit {
         this.scrollEl.nativeElement.style.setProperty('scroll-behavior', 'smooth');
       }
     });
+
+    this.hn.getStoryIndices(this.type).subscribe(ids => {
+      this.ids = ids;
+      this.requestContentFromIds();
+    });
   }
 
   idTracker = (index: number, item: Item) => item.id;
 
-
-  /**
-   * First time load, without this the list would be empty.
-   */
-  ngOnInit() {
-    this.setFeedType(FeedType.TOP);
-  }
-
   switchTheme() {
-    const previousTheme = this.shared.currentTheme$.getValue();
-    this.shared.currentTheme$.next((previousTheme === Theme.LIGHT) ? Theme.DARK : Theme.LIGHT);
+    // TODO
   }
 
   /**
@@ -82,28 +80,26 @@ export class FeedComponent implements OnInit {
    * 
    * @param type Kind of feed
    */
-  setFeedType(type: FeedType): void {
-    this.loadState$.next(LoadState.WAITING);
-    this.stories$.next([]);
-    this.type$.next(type);
+  setFeedType(type: string): void {
+    this.type = type;
     this.page = 0;
+    this.stories = [];
 
-    this.hn.getStoryIndices(this.type$.getValue()).subscribe(ids => {
+    this.loadState = LoadState.WAITING;
+    this.hn.getStoryIndices(this.type).subscribe(ids => {
       this.ids = ids;
-      this.requestContentFromStories();
+      this.requestContentFromIds();
     });
   }
 
   /**
    * Loads the first page (30 items) of the current type (Top Stories by default).
    */
-  requestContentFromStories(offset: number = 0): void {
-    this.hn.getItemsContent(this.ids.slice(offset, offset + 30)).pipe(
-      scan((acc, curr) => [...acc, ...curr], this.stories$.getValue())
-    ).subscribe(res => {
-      this.stories$.next(res);
-      this.loadState$.next(LoadState.IDLE);
-    });
+  requestContentFromIds(itemOffset: number = 0): void {
+    this.hn.getItemsContent(this.ids.slice(itemOffset, itemOffset + 30)).pipe(
+      scan((acc, curr) => [...acc, ...curr], this.stories),
+      finalize(() => this.loadState = LoadState.IDLE)
+      ).subscribe(stories => this.stories = stories);
   }
 
   /**
@@ -111,6 +107,6 @@ export class FeedComponent implements OnInit {
    */
   infiniteLoad(): void {
     this.page++;
-    this.requestContentFromStories(this.page * 30);
+    this.requestContentFromIds(this.page * this.ITEMS_PER_PAGE);
   };
 }
