@@ -15,8 +15,7 @@
 .details {
   display: flex;
   flex-wrap: wrap;
-  opacity: 0.6;
-  gap: 8px;
+  opacity: 0.8;
 }
 
 .chip {
@@ -25,6 +24,14 @@
   gap: 6px;
 
   mat-icon {
-    transform: scale(0.65);
+    font-size: 18px;
+    display: flex;
+    flex: 0;
+    align-items: center;
   }
+}
+
+.chip:not(:last-child)::after {
+  content: "•";
+  margin: 0 4px;
 }

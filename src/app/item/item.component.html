@@ -1,9 +1,10 @@
 <ng-container *ngIf="item">
     <!-- Title -->
-    <div (click)="shareStory(item)" [routerLink]="[item.id]" [ngClass]="commentsStyle == true ? 'mat-h1 m0' : 'mat-h2 m0'" class="title" tabindex="0">
-        {{item.title}}
+    <div (click)="shareStory(item)" [routerLink]="[item.id]" [ngClass]="commentsStyle == true ? 'mat-h1' : 'mat-h2'" class="title" tabindex="0">
+        {{item.title}} 
+        <div class="mat-h4" color="primary" style="margin: 0">By {{item.by}}</div>
     </div>
-    
+
     <!-- Domain -->
     <div *ngIf="item.url">
         <a [href]="item.url" target="_blank" rel="noopener noreferrer">
@@ -12,7 +13,7 @@
     </div>
     
     <!-- Details -->
-    <div class="details">
+    <div class="details" [ngClass]="(shared.isMobile$ | async) == true ? 'mat-small' : 'mat-h4'">
         <div class="chip">
             <mat-icon>favorite</mat-icon>
             <div>{{item.score}}</div>
@@ -20,10 +21,6 @@
         <div class="chip">
             <mat-icon>forum</mat-icon>
             <div>{{item.descendants}}</div>
-        </div>
-        <div class="chip">
-            <mat-icon>face</mat-icon>
-            <div>{{item.by}}</div>
         </div>
         <div class="chip">
             <mat-icon>schedule</mat-icon>
