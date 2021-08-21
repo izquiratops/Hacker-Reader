@@ -2,6 +2,7 @@
   "name": "Hacker Reader",
   "short_name": "Hacker Reader",
   "description": "Yet another client for HN",
+  "theme_color": "#121C2B",
   "background_color": "#121C2B",
   "display": "standalone",
   "scope": "./",

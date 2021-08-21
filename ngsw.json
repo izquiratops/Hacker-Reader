@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1629548568741,
+  "timestamp": 1629567072055,
   "index": "/hacker-reader/index.html",
   "assetGroups": [
     {
@@ -12,14 +12,14 @@
       },
       "urls": [
         "/hacker-reader/336.c9bb867a519265d4a648.js",
-        "/hacker-reader/50.9de537f74570175cc643.js",
+        "/hacker-reader/50.3659c3fd6012f7b54b85.js",
         "/hacker-reader/favicon.ico",
         "/hacker-reader/index.html",
         "/hacker-reader/main.d6f08e2076a541df3175.js",
         "/hacker-reader/manifest.webmanifest",
         "/hacker-reader/polyfills.000707a93d3a8c85866d.js",
-        "/hacker-reader/runtime.8e6682468ca528cc0470.js",
-        "/hacker-reader/styles.7e0699b5df04c67efb9b.css"
+        "/hacker-reader/runtime.ba9847a94504a1a47113.js",
+        "/hacker-reader/styles.f7cf3a2ae1eba0e2e8fd.css"
       ],
       "patterns": []
     },
@@ -40,16 +40,16 @@
   "dataGroups": [],
   "hashTable": {
     "/hacker-reader/336.c9bb867a519265d4a648.js": "621d386af55698a33da1a1ab6df24600defba754",
-    "/hacker-reader/50.9de537f74570175cc643.js": "7e017687ecff0376a0c7b8cdcf47cf9c6a0fe62b",
+    "/hacker-reader/50.3659c3fd6012f7b54b85.js": "79596d6027f8f9baf02ec1e72937b2d0a70c1382",
     "/hacker-reader/assets/icons/icon-192x192.png": "ea865a982489ece9697c395f0f19bf99bb111ddc",
     "/hacker-reader/assets/icons/icons-512.png": "47c21513780cbb3d639a46f8806d0a6904f11abd",
     "/hacker-reader/favicon.ico": "c74b2ae864b0dd10f712cff325d8f0db7de5f864",
-    "/hacker-reader/index.html": "89325fa481a83d178b24118053eece5ffb11844c",
+    "/hacker-reader/index.html": "10bbcbf7292fe97ebb4f7589a237417bd4fddc3c",
     "/hacker-reader/main.d6f08e2076a541df3175.js": "1ae450bc194766c8ee121130c4e79a2024e18861",
-    "/hacker-reader/manifest.webmanifest": "e1f78895463183b135a40d92a50ba070efe65f94",
+    "/hacker-reader/manifest.webmanifest": "000c634c60c35fbad0d81adfb073c8b956424210",
     "/hacker-reader/polyfills.000707a93d3a8c85866d.js": "9f31710ecffce9745e385dc6596c49bbbda09fde",
-    "/hacker-reader/runtime.8e6682468ca528cc0470.js": "09df90a53ef5d4df29d316c45031a7087f5908ba",
-    "/hacker-reader/styles.7e0699b5df04c67efb9b.css": "9ec6af73e240d5a6fce974f72dd56b819b5aeedb"
+    "/hacker-reader/runtime.ba9847a94504a1a47113.js": "c3b3854c6598989c5b9c47e9af102967f99e635b",
+    "/hacker-reader/styles.f7cf3a2ae1eba0e2e8fd.css": "6f0a1cb79ecc51eb1f910690aaaea5cc6cc732a0"
   },
   "navigationUrls": [
     {
