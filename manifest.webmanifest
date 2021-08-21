@@ -1,15 +1,20 @@
 {
   "name": "hacker-reader",
   "short_name": "hacker-reader",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "background_color": "#121C2B",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
   "icons": [
     {
-      "src": "assets/icons/icon-64x64.png",
-      "sizes": "64x64",
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
     }
