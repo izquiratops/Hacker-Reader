@@ -10,9 +10,10 @@
 .comment {
   display: flex;
   flex-direction: column;
+  gap: 4px;
   overflow-y: auto;
-  margin: 0.6rem;
-  padding: 0 12px;
+  margin: 8px;
+  padding-left: 12px;
   border-left: 4px solid;
 }
 

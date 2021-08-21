@@ -1,6 +1,7 @@
 {
-  "name": "hacker-reader",
-  "short_name": "hacker-reader",
+  "name": "Hacker Reader",
+  "short_name": "Hacker Reader",
+  "description": "Yet another client for HN",
   "background_color": "#121C2B",
   "display": "standalone",
   "scope": "./",

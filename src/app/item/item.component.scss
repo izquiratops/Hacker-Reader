@@ -1,8 +1,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  margin: 8px 0;
-  gap: 10px;
+  gap: 8px;
 }
 
 .title {
@@ -16,7 +15,8 @@
 .details {
   display: flex;
   flex-wrap: wrap;
-  opacity: 0.75;
+  opacity: 0.6;
+  gap: 8px;
 }
 
 .chip {
@@ -27,9 +27,4 @@
   mat-icon {
     transform: scale(0.65);
   }
-}
-
-.chip:not(:last-child)::after {
-  content: "•";
-  margin: 0 6px;
 }
